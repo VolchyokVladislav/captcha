@@ -19,7 +19,7 @@ class VectorCompare:
                 topvalue += count * concordance2[word]
         return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
 
-im = Image.open("your_captcha.jpeg").convert("P")
+im = Image.open("testcap.jpeg").convert("P")
 his = im.histogram()
 values = {}
 for i in range(256):
@@ -89,6 +89,7 @@ for letter in iconset:
         imageset.append({letter:temp})
 
 count = 0
+#result = ''
 for letter in letters:
     m = hashlib.md5()
     im3 = im2.crop(( letter[0] , 0, letter[1],im2.size[1] ))
@@ -99,6 +100,7 @@ for letter in letters:
                 guess.append( ( v.relation(y[0],buildvector(im3)),x) )
     guess.sort(reverse=True)
     print("", guess[0])
+    #result += str(guess[0][1])
     count += 1
 
-
+#print(result)
