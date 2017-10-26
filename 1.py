@@ -19,7 +19,7 @@ class VectorCompare:
                 topvalue += count * concordance2[word]
         return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
 
-im = Image.open("testcap.jpeg").convert("P")
+im = Image.open("your_captcha.jpeg").convert("P")
 his = im.histogram()
 values = {}
 for i in range(256):
