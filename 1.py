@@ -3,10 +3,23 @@ from PIL import Image
 import hashlib
 import time
 import os
-from veccom import  VectorCompare
+import math
 
+class VectorCompare:
+    def magnitude(self,concordance):
+        total = 0
+        for word,count in concordance.items():
+            total += count ** 2
+        return math.sqrt(total)
 
-im = Image.open("testcap.gif").convert("P")
+    def relation(self,concordance1, concordance2):
+        topvalue = 0
+        for word, count in concordance1.items():
+            if word in concordance2:
+                topvalue += count * concordance2[word]
+        return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
+
+im = Image.open("testcap.jpeg").convert("P")
 his = im.histogram()
 values = {}
 for i in range(256):
@@ -62,6 +75,7 @@ def buildvector(im):
         count += 1
     return d1
 
+
 v = VectorCompare()
 
 iconset =  ['1','2','3','4','5','6','7','8','9']
@@ -73,3 +87,18 @@ for letter in iconset:
         if img != "Thumbs.db":
             temp.append(buildvector(Image.open("./icontest/%s/%s"%(letter,img))))
         imageset.append({letter:temp})
+
+count = 0
+for letter in letters:
+    m = hashlib.md5()
+    im3 = im2.crop(( letter[0] , 0, letter[1],im2.size[1] ))
+    guess = []
+    for image in imageset:
+        for x,y in image.items():
+            if len(y) != 0:
+                guess.append( ( v.relation(y[0],buildvector(im3)),x) )
+    guess.sort(reverse=True)
+    print("", guess[0])
+    count += 1
+
+
