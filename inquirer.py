@@ -1,7 +1,6 @@
 from _operator import itemgetter
 from PIL import Image
 import hashlib
-import time
 import os
 import math
 
@@ -19,7 +18,7 @@ class VectorCompare:
                 topvalue += count * concordance2[word]
         return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
 
-im = Image.open("testcap.jpeg").convert("P")
+im = Image.open("code10.php.jpeg").convert("P")
 his = im.histogram()
 values = {}
 for i in range(256):
@@ -58,15 +57,6 @@ for y in range(im2.size[0]):
         letters.append((start, end))
     inletter = False
 
-count = 0
-for letter in letters:
-    m = hashlib.md5()
-    im3 = im2.crop(( letter[0] , 0, letter[1],im2.size[1] ))
-    b = ("%s%s" % (time.time(),count)).encode('utf-8')
-    m.update(b)
-    im3.save("./%s.gif" % (m.hexdigest()))
-    count += 1
-
 def buildvector(im):
     d1 = {}
     count = 0
@@ -89,18 +79,28 @@ for letter in iconset:
         imageset.append({letter:temp})
 
 count = 0
-#result = ''
+result = ''
 for letter in letters:
     m = hashlib.md5()
     im3 = im2.crop(( letter[0] , 0, letter[1],im2.size[1] ))
-    guess = []
-    for image in imageset:
-        for x,y in image.items():
-            if len(y) != 0:
-                guess.append( ( v.relation(y[0],buildvector(im3)),x) )
-    guess.sort(reverse=True)
-    print("", guess[0])
-    #result += str(guess[0][1])
-    count += 1
+    his = im3.histogram()
+    values = {}
+    for i in range(256):
+        values[i] = his[i]
+    newval = []
+    for j, k in sorted(values.items(), key=itemgetter(1), reverse=True)[1:2]:
+        newval.append(k)
+        if k <= 10:
+            count += 1
+        else:
+            guess = []
+            for image in imageset:
+                for x,y in image.items():
+                    if len(y) != 0:
+                        guess.append( ( v.relation(y[0],buildvector(im3)),x) )
+            guess.sort(reverse=True)
+            #print("", guess[0])
+            result += str(guess[0][1])
+            count += 1
 
-#print(result)
+print(result)
